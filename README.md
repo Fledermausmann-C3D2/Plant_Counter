@@ -24,8 +24,8 @@ Created by Fledermausmann - CCC
 ## ⚙️ Installation
 
 ```bash
-git clone https://github.com/Fledermausmann-C3D2/REPO.git
-cd REPO
+git clone https://github.com/Fledermausmann-C3D2/Plant_Counter.git
+cd Plant_Counter
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt

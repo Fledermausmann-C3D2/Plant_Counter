@@ -5,8 +5,13 @@ import csv
 import threading
 import ttkbootstrap as ttk
 from tkinter import filedialog
+import re
 
 # ---------------- Funktionen ----------------
+
+#Sortierung der Bilder
+def natural_key(text):
+    return [int(c) if c.isdigit() else c.lower() for c in re.split(r'(\d+)', text)]
 
 # Ordner wählen
 def choose_folder():
@@ -54,6 +59,8 @@ def run_analysis():
 
             if file.lower().endswith((".jpg",".jpeg",".png")):
                 image_paths.append(os.path.join(root_dir,file))
+
+    image_paths.sort(key=natural_key)
 
     total_images = len(image_paths)
 

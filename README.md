@@ -1,6 +1,11 @@
 # Plant Counter
 
+### Background
+At the JKI we need to know how many plants are grown at the experimental field.
+Count every picture bei hand can take hours ...
+To make life more easy i creae this Program.
 
+## Main Funktion
 This program automatically counts plants in images.
 First, the red frame is detected and only the area
 inside this frame is analyzed. 
@@ -14,14 +19,18 @@ Created by Fledermausmann - CCC
 
 ---
 
-## 📦 Features
+## Features
 - Read Folderwith all Pic (.jpg, .jpeg, .png)
 - Count Green Plants in the Picture
 - Save the Count as CSV
 
 ---
 
-## ⚙️ Installation
+>[!NOTE]
+>This Programm is write for Linux
+
+
+## Installation
 
 ```bash
 git clone https://github.com/Fledermausmann-C3D2/Plant_Counter.git

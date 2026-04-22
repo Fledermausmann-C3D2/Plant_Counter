@@ -15,7 +15,7 @@ watershed method.
 You can choose a complete Folder with pictures!
 The number of detected plants is saved in a CSV file.
 
-Created by Fledermausmann - CCC
+Created by Fledermausmann - from CCC
 
 ---
 
@@ -27,7 +27,7 @@ Created by Fledermausmann - CCC
 ---
 
 >[!NOTE]
->This Programm is write for Linux
+>This Programm is tested on Linux
 
 
 ## Installation

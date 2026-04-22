@@ -7,18 +7,18 @@ import ttkbootstrap as ttk
 from tkinter import filedialog
 import re
 
-# ---------------- Funktionen ----------------
+# ---------------- Functions ----------------
 
-#Sortierung der Bilder
+# Sorting images
 def natural_key(text):
     return [int(c) if c.isdigit() else c.lower() for c in re.split(r'(\d+)', text)]
 
-# Ordner wählen
+# Choose folder
 def choose_folder():
     folder = filedialog.askdirectory()
     folder_var.set(folder)
 
-# CSV Speicherort wählen
+# Choose CSV save location
 def choose_output():
 
     file = filedialog.asksaveasfilename(
@@ -35,23 +35,23 @@ def start_analysis():
 
 def run_analysis():
 
-    # Ordnerwahl mit allen nachfolgenden Unterordnern
+    # Folder selection including all subfolders
     image_folder = folder_var.get()
 
     if not image_folder:
         status_var.set("Please select an image folder first")
         return
 
-    # CSV Pfad bestimmen
+    # Determine CSV path
     output_csv = output_var.get()
 
-    # Auto CSV erstellen wenn nichts gewählt
+    # Auto-create CSV if none selected
     if not output_csv:
         output_csv = os.path.join(image_folder,"plant_counts.csv")
 
     results = []
 
-    # Bilderliste erstellen für Fortschrittsanzeige
+    # Create image list for progress display
     image_paths = []
 
     for root_dir, dirs, files in os.walk(image_folder):
@@ -72,12 +72,12 @@ def run_analysis():
 
         img = cv2.imread(path)
 
-        # Farbumkehr zu HSV (bessere trennung)
+        # Convert to HSV (better separation)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
 # ---------------------------
-        # Rahmen erkennen (nur innerhalb zählen)
-        # Roten Rahmen maskieren
+        # Detect frame (count only inside)
+        # Mask red frame
         lower_red1 = np.array([0, 120, 70])
         upper_red1 = np.array([10, 255, 255])
         lower_red2 = np.array([170, 120, 70])
@@ -87,37 +87,37 @@ def run_analysis():
         mask_red2 = cv2.inRange(hsv, lower_red2, upper_red2)
         mask_red = mask_red1 | mask_red2
 
-        # Konturen finden
+        # Find contours
         contours, _ = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         if len(contours) > 0:
-            # Größte Kontur auswählen (Rahmen)
+            # Select largest contour (frame)
             c = max(contours, key=cv2.contourArea)
             x, y, w, h = cv2.boundingRect(c)
 
-            # Bild und Maske auf ROI zuschneiden
+            # Crop image and mask to ROI
             img = img[y:y+h, x:x+w]
             hsv = hsv[y:y+h, x:x+w]
 
-        # Grünsegmentierung - Farb Array
-        # kleiner Bereich (35/85)(25/90)
+        # Green segmentation - color range
+        # small range (35/85)(25/90)
         lower_green = np.array([25,40,40])
         upper_green = np.array([90,255,255])
 
         mask = cv2.inRange(hsv, lower_green, upper_green)
 
-        # Morphologische Filter (Rauschentfernung)
-        # kleine Pflanzen (3/3), große zb (7/7)
-        kernel = np.ones((5,5), np.uint8)
+        # Morphological filters (noise removal)
+        # small plants (3/3), larger e.g. (7/7)
+        kernel = np.ones((10,5), np.uint8)
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
-        # Hintergrund bestimmen / abgrenzen
-        # interations 1-4 zb wie dolle Pflanzenfläche vergrößern
+        # Define background / separate
+        # iterations 1-4 define how much plant area is expanded
         sure_bg = cv2.dilate(mask, kernel, iterations=3)
 
-        # Distance Transform (Pflanzenkern finden) 
-        # zentrum vs pflanzenrand
+        # Distance transform (find plant core) 
+        # center vs plant edges
         dist = cv2.distanceTransform(mask, cv2.DIST_L2, 5)
 
         _, sure_fg = cv2.threshold(dist, 0.3*dist.max(), 255, 0)
@@ -126,31 +126,31 @@ def run_analysis():
 
         unknown = cv2.subtract(sure_bg, sure_fg)
 
-        # Marker erstellen + ID für jede Pflanze
+        # Create markers + ID for each plant
         num_labels, markers = cv2.connectedComponents(sure_fg)
 
         markers = markers + 1
 
         markers[unknown==255] = 0
 
-        # Watershed (überlappung trennen)
+        # Watershed (separate overlapping objects)
         markers = cv2.watershed(img, markers)
 
         plant_count = 0
 
-        # Zählen
+        # Counting
         for label in np.unique(markers):
 
             if label <= 1:
                 continue
             
-            # Hintergrund überspringen
+            # Skip background
             mask_label = np.uint8(markers == label)
 
             area = cv2.countNonZero(mask_label)
 
-            # kleine Objekte weg
-            # kleine Pflanze bis 50 , große zb 400
+            # Remove small objects
+            # small plant up to 50, larger e.g. 400
             if area > 150:
                 plant_count += 1
 
@@ -162,7 +162,7 @@ def run_analysis():
         status_var.set(f"Processing image {i+1} / {total_images}")
         root.update_idletasks()
 
-    # CSV speichern
+    # Save CSV
     with open(output_csv,"w",newline="") as f:
 
         writer = csv.writer(f)
@@ -184,7 +184,7 @@ folder_var = ttk.StringVar()
 output_var = ttk.StringVar()
 status_var = ttk.StringVar()
 
-# Erklärungstext
+# Description text
 description = """
 This program automatically counts plants in images.
 First, the red frame is detected and only the area

@@ -19,6 +19,17 @@ Created by Fledermausmann - from CCC
 
 ---
 
+
+>[!IMPORTANT]
+>Use the Debug windows to sort out the wrong Pictures from the list to manualy count
+
+>[!TIP]
+> Because the Plants can have diffrent grow situations(like 60% one leaf / 30% two leaf / 10% leaf) in 
+> every plot, i use a linear Regression for the Reasons.
+>
+> You need enought manual count pitures vs the atomatic count pictures to do this ...
+
+
 ## Features
 - Read Folderwith all Pic (.jpg, .jpeg, .png)
 - Count Green Plants in the Picture

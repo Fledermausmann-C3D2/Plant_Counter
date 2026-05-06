@@ -17,7 +17,7 @@ The number of detected plants is saved in a CSV file.
 
 Created by Fledermausmann - from CCC
 
----
+
 
 
 >[!IMPORTANT]
@@ -35,7 +35,8 @@ Created by Fledermausmann - from CCC
 - Count Green Plants in the Picture
 - Save the Count as CSV
 
----
+
+![Example](images/Sample.png)
 
 >[!NOTE]
 >This Programm is tested on Linux

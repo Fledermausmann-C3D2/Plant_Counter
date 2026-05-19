@@ -79,14 +79,19 @@ def run_analysis():
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         # -------- FRAME DETECTION --------
-        lower_red1 = np.array([0, 120, 70])
+        lower_red1 = np.array([0, 120, 120])
         upper_red1 = np.array([10, 255, 255])
-        lower_red2 = np.array([170, 120, 70])
+
+        lower_red2 = np.array([170, 120, 120])
         upper_red2 = np.array([180, 255, 255])
 
         mask_red1 = cv2.inRange(hsv, lower_red1, upper_red1)
         mask_red2 = cv2.inRange(hsv, lower_red2, upper_red2)
         mask_red = mask_red1 | mask_red2
+
+        # close Red lines, cutted by leafes, try
+        kernel_red = np.ones((30,30), np.uint8)
+        mask_red = cv2.morphologyEx(mask_red, cv2.MORPH_CLOSE, kernel_red)
 
         # Find contours
         contours, _ = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -197,7 +202,7 @@ def run_analysis():
 root = ttk.Window(themename="solar")
 
 root.title("Plant Counter")
-root.geometry("900x1200")
+root.geometry("900x1400")
 
 folder_var = ttk.StringVar()
 output_var = ttk.StringVar()

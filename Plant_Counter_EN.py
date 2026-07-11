@@ -79,10 +79,10 @@ def run_analysis():
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         # -------- FRAME DETECTION --------
-        lower_red1 = np.array([0, 120, 120])
-        upper_red1 = np.array([10, 255, 255])
+        lower_red1 = np.array([0, 80, 100])
+        upper_red1 = np.array([3, 255, 255])
 
-        lower_red2 = np.array([170, 120, 120])
+        lower_red2 = np.array([150, 80, 100])
         upper_red2 = np.array([180, 255, 255])
 
         mask_red1 = cv2.inRange(hsv, lower_red1, upper_red1)
@@ -107,14 +107,14 @@ def run_analysis():
 
         # Green segmentation - color range
         # small range (35/85)(25/90)
-        lower_green = np.array([25, 40, 40])
+        lower_green = np.array([25, 30, 35])
         upper_green = np.array([90, 255, 255])
 
         mask = cv2.inRange(hsv, lower_green, upper_green)
         
         # Morphological filters (noise removal)
         # small plants (3/3), larger e.g. (7/7)
-        kernel = np.ones((20, 5), np.uint8)
+        kernel = np.ones((10, 3), np.uint8)
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 

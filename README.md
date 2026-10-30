@@ -33,7 +33,7 @@ The primary objectives of this project were:
 
 ## Main Function
 
-!\[Example\](images/Sample.png)
+![Example](images/Sample.png)
 
 This program automatically counts plants in images:
 

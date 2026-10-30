@@ -14,7 +14,7 @@ While commercial software solutions exist for plant phenotyping, they are often 
 
 ## Challenges in Automated Plant Detection
 
-Automated image-based plant detection has gained traction in recent years, particularly with advances in computer vision and machine learning. However, color-based segmentation — a common approach for distinguishing plants from soil — faces challenges under natural field conditions, where lighting variability, shadows, and occlusions can compromise accuracy. Studies such as those published in *Frontiers in Plant Science* (2020) have highlighted the difficulties in separating overlapping plant canopies, particularly as plants mature and leaf density increases. These challenges are exacerbated in barley field trials, where early-stage seedlings (1–2 leaves) are easier to distinguish than later-stage plants (3–4 leaves), which often exhibit leaf overlapping.
+Automated image-based plant detection has gained traction in recent years, particularly with advances in computer vision and machine learning. However, color-based segmentation, a common approach for distinguishing plants from soil, faces challenges under natural field conditions, where lighting variability, shadows and occlusions can compromise accuracy. Studies such as those published in *Frontiers in Plant Science* (2020) have highlighted the difficulties in separating overlapping plant canopies, particularly as plants mature and leaf density increases. These challenges are exacerbated in barley field trials, where early-stage seedlings (1–2 leaves) are easier to distinguish than later-stage plants (3–4 leaves), which often exhibit leaf overlapping.
 
 ### Objectives
 
@@ -42,7 +42,7 @@ This program automatically counts plants in images:
 3. **Watershed separation** – Overlapping plants are separated using a watershed method.
 4. **Output** – The number of detected plants per image is saved in a CSV file.
 
-You can choose a complete folder with pictures! The results are written to a CSV file containing each image's filename and its corresponding plant count — a format that facilitates further statistical analysis, such as calculating Pearson's R² for correlation and Mean Absolute Error (MAE) to evaluate the average deviation of automated counts from manual counts.
+You can choose a complete folder with pictures! The results are written to a CSV file containing each image's filename and its corresponding plant count a format that facilitates further statistical analysis, such as calculating Pearson's R² for correlation and Mean Absolute Error (MAE) to evaluate the average deviation of automated counts from manual counts.
 
 Example
 
@@ -74,7 +74,7 @@ The tool was implemented in **Python 3.14** using VS Codium on a Linux environme
 | ttkbootstrap   | Graphical user interface (GUI)                                                   |
 
 
-The GUI provides an intuitive platform for users to select input folders, visualize progress and inspect intermediate results in debug mode. The tool and its source code are publicly available on GitHub, ensuring transparency and reproducibility.
+The GUI provides an intuitive platform for users to select input folders, visualize progress and inspect intermediate results in debug mode.
 
 ### Image Processing Pipeline
 
@@ -95,7 +95,7 @@ mask_red2 = cv2.inRange(hsv, lower_red2, upper_red2)
 mask_red = mask_red1 | mask_red2
 ```
 
-To ensure robustness, a morphological closing operation with a **30×30 kernel** is applied to fill any gaps in the red frame mask. The largest contour in the resulting mask is identified as the frame and the image is cropped to this region of interest (ROI) for further analysis. This step reliably isolates the ROI in **&gt;98% of images**, even under varying lighting conditions, ensuring that subsequent processing steps focus only on the relevant plot area and reducing the risk of false positives from background noise.
+To ensure robustness, a morphological closing operation with a **30×30 kernel** is applied to fill any gaps in the red frame mask. The largest contour in the resulting mask is identified as the frame and the image is cropped to this region of interest (ROI) for further analysis. This step reliably isolates the ROI in **&gt;98% of images** even under varying lighting conditions, ensuring that subsequent processing steps focus only on the relevant plot area and reducing the risk of false positives from background noise.
 
 **2. Green plant segmentation.** Green plant areas are segmented using an HSV-based green threshold:
 
@@ -120,7 +120,7 @@ The developed Python-based tool successfully automated the detection and countin
 
 ### Processing Efficiency
 
-The tool processed **1,000+ images in under 5 minutes** on a standard Linux workstation — a significant improvement compared to the days required for manual counting. This efficiency was achieved through the use of OpenCV's optimized image processing functions, such as `cv2.cvtColor`, `cv2.inRange`, and `cv2.watershed`, which are implemented in C++ and thus highly performant. The parallel processing of images in batches further reduced the overall runtime, making the tool suitable for real-time or near-real-time applications in field trials.
+The tool processed **1,000+ images in under 5 minutes** on a standard Linux workstation, a significant improvement compared to the days required for manual counting. This efficiency was achieved through the use of OpenCV's optimized image processing functions, such as `cv2.cvtColor`, `cv2.inRange`, and `cv2.watershed`, which are implemented in C++ and thus highly performant. The parallel processing of images in batches further reduced the overall runtime, making the tool suitable for real-time or near-real-time applications in field trials.
 
 ### Accuracy and Stage-Dependent Performance
 

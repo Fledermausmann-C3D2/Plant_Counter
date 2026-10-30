@@ -10,7 +10,7 @@ Created by Fledermausmann – from CCC
 
 Germination rate analysis is a critical parameter in plant breeding and agronomic research, as it directly influences crop establishment, yield potential, and stress tolerance assessments. Traditional methods for evaluating germination in field trials rely on manual counting of seedlings, which is not only time-consuming but also prone to human error, particularly in large-scale experiments. For instance, at the Julius Kühn-Institut (JKI) in Sanitz, Germany, field trials for barley (*Hordeum vulgare*) often involve **1,000+ plots**, each measuring 0.5 m × 0.5 m and requiring individual assessment. Manual evaluation of such datasets can take **several days**, delaying data analysis and decision-making in breeding programs.
 
-While commercial software solutions exist for plant phenotyping, they are often cost-prohibitive and may lack the flexibility to adapt to specific experimental setups, such as the 0.5 m × 0.5 m plots used in this study. Additionally, these tools frequently require specialized hardware (e.g., high-resolution cameras or hyperspectral sensors), which may not be accessible to all research institutions. Thus, there is a growing need for low-cost, open-source alternatives that can be tailored to the unique demands of field-based agronomic research — this program was developed to fill that gap.
+While commercial software solutions exist for plant phenotyping, they are often cost-prohibitive and may lack the flexibility to adapt to specific experimental setups, such as the 0.5 m × 0.5 m plots used in this study. Additionally, these tools frequently require specialized hardware (e.g., high-resolution cameras or hyperspectral sensors), which may not be accessible to all research institutions. Thus, there is a growing need for low-cost, open-source alternatives that can be tailored to the unique demands of field-based agronomic research, this program was developed to fill that gap.
 
 ## Challenges in Automated Plant Detection
 
@@ -33,9 +33,11 @@ The primary objectives of this project were:
 
 ## Main Function
 
+!\[Example\](images/Sample.png)
+
 This program automatically counts plants in images:
 
-1. **Frame detection** – The red frame surrounding each plot is detected first, and only the area inside this frame is analyzed.
+1. **Frame detection** – The red frame surrounding each plot is detected first and only the area inside this frame is analyzed.
 2. **Green segmentation** – Green plant areas are segmented.
 3. **Watershed separation** – Overlapping plants are separated using a watershed method.
 4. **Output** – The number of detected plants per image is saved in a CSV file.
@@ -72,11 +74,11 @@ The tool was implemented in **Python 3.14** using VS Codium on a Linux environme
 | ttkbootstrap   | Graphical user interface (GUI)                                                   |
 
 
-The GUI provides an intuitive platform for users to select input folders, visualize progress, and inspect intermediate results in debug mode. The tool and its source code are publicly available on GitHub, ensuring transparency and reproducibility.
+The GUI provides an intuitive platform for users to select input folders, visualize progress and inspect intermediate results in debug mode. The tool and its source code are publicly available on GitHub, ensuring transparency and reproducibility.
 
 ### Image Processing Pipeline
 
-The pipeline begins by loading images from a user-selected folder, including all subfolders, and sorting them using a natural sort order to maintain chronological processing. Each image is first converted from the BGR color space to HSV to facilitate color-based segmentation.
+The pipeline begins by loading images from a user-selected folder, including all subfolders and sorting them using a natural sort order to maintain chronological processing. Each image is first converted from the BGR color space to HSV to facilitate color-based segmentation.
 
 **1. Red frame detection.** The red frame surrounding each plot is detected using HSV color thresholding with two defined ranges, combined using a bitwise OR operation to create a comprehensive red mask:
 
@@ -93,7 +95,7 @@ mask_red2 = cv2.inRange(hsv, lower_red2, upper_red2)
 mask_red = mask_red1 | mask_red2
 ```
 
-To ensure robustness, a morphological closing operation with a **30×30 kernel** is applied to fill any gaps in the red frame mask. The largest contour in the resulting mask is identified as the frame, and the image is cropped to this region of interest (ROI) for further analysis. This step reliably isolates the ROI in **&gt;98% of images**, even under varying lighting conditions, ensuring that subsequent processing steps focus only on the relevant plot area and reducing the risk of false positives from background noise.
+To ensure robustness, a morphological closing operation with a **30×30 kernel** is applied to fill any gaps in the red frame mask. The largest contour in the resulting mask is identified as the frame and the image is cropped to this region of interest (ROI) for further analysis. This step reliably isolates the ROI in **&gt;98% of images**, even under varying lighting conditions, ensuring that subsequent processing steps focus only on the relevant plot area and reducing the risk of false positives from background noise.
 
 **2. Green plant segmentation.** Green plant areas are segmented using an HSV-based green threshold:
 
@@ -104,7 +106,7 @@ upper_green = np.array([90, 255, 255])
 
 The resulting green mask undergoes morphological operations to remove noise: an **opening operation with a 10×3 kernel** eliminates small artifacts, while a **closing operation** connects nearby plant regions. The threshold effectively distinguishes plant material from soil, although false negatives can occasionally occur in images with poor lighting or excessive shadows, where green pixels fall outside the defined threshold range.
 
-**3. Watershed separation.** To separate overlapping plants, a **distance transform** is applied to identify plant cores, and a threshold of **30% of the maximum distance** is used to define the sure foreground. The **watershed algorithm** is then employed to separate touching objects, using markers derived from the connected components of the sure foreground. Each unique marker, excluding the background, is analyzed, and objects with an **area greater than 900 pixels** are counted as individual plants.
+**3. Watershed separation.** To separate overlapping plants, a **distance transform** is applied to identify plant cores and a threshold of **30% of the maximum distance** is used to define the sure foreground. The **watershed algorithm** is then employed to separate touching objects, using markers derived from the connected components of the sure foreground. Each unique marker, excluding the background, is analyzed and objects with an **area greater than 900 pixels** are counted as individual plants.
 
 **4. Visualization &amp; debug mode.** For visualization purposes, bounding boxes are drawn around detected plants in green and filtered objects in red. In debug mode, users can visualize these intermediate results and proceed through the images step-by-step. The GUI allows users to select the image folder and output CSV path, with a progress bar and status updates displayed during the analysis.
 
